@@ -3,7 +3,7 @@ from odoo import fields, models
 
 class EstateProperty(models.Model):
     _name = "estate.property"
-    _description = "Current estate property"
+    _description = "Property characteristics"
 
     name = fields.Char(required=True)
     description = fields.Text()
