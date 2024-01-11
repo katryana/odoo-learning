@@ -30,6 +30,7 @@
             <form string="Properties">
                 <sheet>
                     <h1><field name="name" required="1"/></h1>
+                    <field name="tag_ids" widget="many2many_tags"/>
                     <group>
                         <group>
                             <group>
@@ -53,6 +54,23 @@
                                     <field name="garden"/>
                                     <field name="garden_area"/>
                                     <field name="garden_orientation"/>
+                                </group>
+                            </page>
+                            <page string="Offers">
+                                <group>
+                                    <field name="offer_ids" string="">
+                                        <tree>
+                                            <field name="price"/>
+                                            <field name="partner_id"/>
+                                            <field name="status"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Other info">
+                                <group>
+                                    <field name="salesperson_id" string="Salesman"/>
+                                    <field name="buyer_id"/>
                                 </group>
                             </page>
                         </notebook>
