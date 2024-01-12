@@ -10,6 +10,7 @@ from odoo.tools import float_compare, float_is_zero
 class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real Estate Property"
+    _order = "id desc"
 
     name = fields.Char(required=True)
     description = fields.Text()
@@ -52,10 +53,10 @@ class EstateProperty(models.Model):
     salesperson_id = fields.Many2one(
         "res.users", string="Salesperson", default=lambda self: self.env.user
     )
-    tag_ids = fields.Many2many("estate.property.tag", string="Property Tags")
     offer_ids = fields.One2many(
         "estate.property.offer", "property_id", string="Property Offers"
     )
+    tag_ids = fields.Many2many("estate.property.tag", string="Property Tags")
     total_area = fields.Integer(compute="_compute_total_area", store=True)
     best_price = fields.Float(compute="_compute_best_price", store=True)
 

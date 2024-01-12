@@ -7,6 +7,7 @@ from odoo.exceptions import UserError
 class EstatePropertyOffer(models.Model):
     _name = "estate.property.offer"
     _description = "Real Estate Property Offer"
+    _order = "price desc"
 
     price = fields.Float(required=True)
     status = fields.Selection(
@@ -18,6 +19,7 @@ class EstatePropertyOffer(models.Model):
     date_deadline = fields.Date(
         compute="_compute_date_deadline", inverse="_inverse_date_deadline", store=True
     )
+    property_state = fields.Selection(related="property_id.state")
 
     @api.depends("create_date", "validity")
     def _compute_date_deadline(self):
