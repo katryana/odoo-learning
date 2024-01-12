@@ -13,7 +13,9 @@ class EstateProperty(models.Model):
     name = fields.Char(required=True)
     description = fields.Text()
     postcode = fields.Char()
-    date_availability = fields.Date(copy=False, default=(date.today() + relativedelta(months=3)))
+    date_availability = fields.Date(
+        copy=False, default=(date.today() + relativedelta(months=3))
+    )
     expected_price = fields.Float(required=True)
     selling_price = fields.Float(readonly=True, copy=False)
     bedrooms = fields.Integer(default=2)
@@ -24,21 +26,35 @@ class EstateProperty(models.Model):
     garden_area = fields.Integer()
     garden_orientation = fields.Selection(
         string="Garden orientation",
-        selection=[("north", "North"), ("south", "South"), ("east", "East"), ("west", "West")],
+        selection=[
+            ("north", "North"),
+            ("south", "South"),
+            ("east", "East"),
+            ("west", "West"),
+        ],
     )
     active = fields.Boolean(default=True)
-    state = fields.Selection([
-        ("new", "New"),
-        ("offer_received", "Offer Received"),
-        ("offer_accepted", "Offer Accepted"),
-        ("sold", "Sold"),
-        ("canceled", "Canceled"),
-    ], required=True, default="new", copy=False)
+    state = fields.Selection(
+        [
+            ("new", "New"),
+            ("offer_received", "Offer Received"),
+            ("offer_accepted", "Offer Accepted"),
+            ("sold", "Sold"),
+            ("canceled", "Canceled"),
+        ],
+        required=True,
+        default="new",
+        copy=False,
+    )
     property_type_id = fields.Many2one("estate.property.type", string="Property Type")
     buyer_id = fields.Many2one("res.partner", string="Buyer", copy=False)
-    salesperson_id = fields.Many2one("res.users", string="Salesperson", default=lambda self: self.env.user)
+    salesperson_id = fields.Many2one(
+        "res.users", string="Salesperson", default=lambda self: self.env.user
+    )
     tag_ids = fields.Many2many("estate.property.tag", string="Property Tags")
-    offer_ids = fields.One2many("estate.property.offer", "property_id", string="Property Offers")
+    offer_ids = fields.One2many(
+        "estate.property.offer", "property_id", string="Property Offers"
+    )
     total_area = fields.Integer(compute="_compute_total_area", store=True)
     best_price = fields.Float(compute="_compute_best_price", store=True)
 
@@ -74,3 +90,16 @@ class EstateProperty(models.Model):
                 raise UserError("Canceled properties cannot be sold.")
             record.state = "sold"
         return True
+
+    _sql_constraints = [
+        (
+            "check_expected_price_positive",
+            "CHECK(expected_price > 0)",
+            "The expected price must be strictly positive.",
+        ),
+        (
+            "check_selling_price_positive",
+            "CHECK(selling_price >= 0)",
+            "The selling price must be positive.",
+        ),
+    ]
