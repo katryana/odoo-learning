@@ -6,6 +6,13 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="open_property_type_offers_action" model="ir.actions.act_window">
+        <field name="name">Offers</field>
+        <field name="res_model">estate.property.offer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[("property_type_id", "=", active_id)]</field>
+    </record>
+
     <record id="estate_property_type_view_tree" model="ir.ui.view">
         <field name="name">estate.property.type.tree</field>
         <field name="model">estate.property.type</field>
@@ -23,15 +30,22 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <h1><field name="name" required="1"/></h1>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(open_property_type_offers_action)d" type="action" icon="fa-money" class="oe_stat_button">
+                            <field name="offer_count" string="Offers" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" required="1"/></h1>
+                    </div>
                     <notebook>
                         <page string="Properties">
                             <field name="property_ids">
-                            <tree>
-                                <field name="name" string="Title"/>
-                                <field name="expected_price"/>
-                                <field name="state" string="Status"/>
-                            </tree>
+                                <tree>
+                                    <field name="name" string="Title"/>
+                                    <field name="expected_price"/>
+                                    <field name="state" string="Status"/>
+                                </tree>
                             </field>
                         </page>
                     </notebook>
