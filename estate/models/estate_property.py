@@ -119,3 +119,9 @@ class EstateProperty(models.Model):
                     "The selling price must be at least 90% of the expected price! "
                     "You must reduce the expected price if you want to accept this offer."
                 )
+
+    @api.ondelete(at_uninstall=False)
+    def check_property_state(self):
+        for record in self:
+            if record.state not in ["new", "canceled"]:
+                raise ValidationError("Only new or canceled properties can be deleted.")

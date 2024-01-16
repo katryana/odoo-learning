@@ -1,7 +1,7 @@
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class EstatePropertyOffer(models.Model):
@@ -52,6 +52,7 @@ class EstatePropertyOffer(models.Model):
                 raise UserError(
                     "Another offer has already been accepted for this property."
                 )
+            offer.property_id.state = "offer_accepted"
             offer.property_id.buyer_id = offer.partner_id
             offer.property_id.selling_price = offer.price
             offer.write({"status": "accepted"})
@@ -69,3 +70,16 @@ class EstatePropertyOffer(models.Model):
             "The offer price must be strictly positive.",
         )
     ]
+
+    @api.model
+    def create(self, vals):
+        property_record = self.env["estate.property"].browse(vals.get("property_id"))
+
+        if property_record.state == "new":
+            property_record.write({"state": "offer_received"})
+        else:
+            max_existing_offer_price = max(property_record.offer_ids.mapped("price"), default=0)
+            if vals.get("price") <= max_existing_offer_price:
+                raise ValidationError(f"The offer price must be higher than {max_existing_offer_price}")
+
+        return super().create(vals)
